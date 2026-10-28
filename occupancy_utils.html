@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module occupancy_utils</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">occupancy_utils</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/mnt/data/MMA3001_GitHub_Package/occupancy_utils.py">/mnt/data/MMA3001_GitHub_Package/occupancy_utils.py</a></td></tr></table>
+    <p><span class="code">Reusable,&nbsp;testable&nbsp;operations&nbsp;for&nbsp;15-minute-ahead&nbsp;room&nbsp;occupancy&nbsp;prediction.<br>
+&nbsp;<br>
+All&nbsp;time-indexed&nbsp;examples&nbsp;must&nbsp;be&nbsp;sorted&nbsp;before&nbsp;splitting.&nbsp;Raw&nbsp;timestamps&nbsp;are<br>
+UTC;&nbsp;calendar&nbsp;features&nbsp;are&nbsp;derived&nbsp;in&nbsp;Australia/Melbourne.</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"><a href="pandas.html">pandas</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-chronological_split"><strong>chronological_split</strong></a>(
+    data: 'pd.DataFrame',
+    train_fraction: 'float' = 0.7,
+    validation_fraction: 'float' = 0.15
+)</dt><dd><span class="code">Split&nbsp;sorted&nbsp;time&nbsp;series&nbsp;into&nbsp;train/validation/test&nbsp;without&nbsp;crossing&nbsp;target&nbsp;boundaries.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;Frame&nbsp;accepted&nbsp;by&nbsp;:func:`validate_frame`.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;train_fraction:&nbsp;Fraction&nbsp;of&nbsp;earlier&nbsp;examples&nbsp;assigned&nbsp;to&nbsp;training.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;validation_fraction:&nbsp;Fraction&nbsp;assigned&nbsp;to&nbsp;validation.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Tuple&nbsp;of&nbsp;(train,&nbsp;validation,&nbsp;test)&nbsp;DataFrames.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;Fractions&nbsp;are&nbsp;invalid&nbsp;or&nbsp;any&nbsp;resulting&nbsp;split&nbsp;is&nbsp;empty.</span></dd></dl>
+ <dl><dt><a name="-evaluate_regression"><strong>evaluate_regression</strong></a>(actual, predicted) -&gt; 'dict[str, float]'</dt><dd><span class="code">Compute&nbsp;MAE,&nbsp;RMSE&nbsp;(people)&nbsp;and&nbsp;R2&nbsp;(dimensionless).<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;actual:&nbsp;Recorded&nbsp;target&nbsp;occupancy&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;predicted:&nbsp;Corresponding&nbsp;model&nbsp;predictions.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Dictionary&nbsp;containing&nbsp;MAE,&nbsp;RMSE,&nbsp;and&nbsp;R2.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;Fewer&nbsp;than&nbsp;two&nbsp;observations&nbsp;or&nbsp;invalid/mismatched&nbsp;arrays.</span></dd></dl>
+ <dl><dt><a name="-historical_average_fit"><strong>historical_average_fit</strong></a>(train: 'pd.DataFrame') -&gt; 'dict'</dt><dd><span class="code">Fit&nbsp;time-of-week&nbsp;occupancy&nbsp;averages&nbsp;using&nbsp;training&nbsp;targets&nbsp;only.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;train:&nbsp;Chronological&nbsp;training&nbsp;frame&nbsp;with&nbsp;target&nbsp;timestamps&nbsp;and&nbsp;headcount.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Learned&nbsp;day/quarter-hour&nbsp;means,&nbsp;hour&nbsp;means&nbsp;and&nbsp;global&nbsp;mean.</span></dd></dl>
+ <dl><dt><a name="-historical_average_predict"><strong>historical_average_predict</strong></a>(fit: 'dict', data: 'pd.DataFrame') -&gt; 'np.ndarray'</dt><dd><span class="code">Predict&nbsp;using&nbsp;trained&nbsp;weekly&nbsp;slot&nbsp;means,&nbsp;then&nbsp;hour&nbsp;and&nbsp;global&nbsp;fallbacks.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fit:&nbsp;Mapping&nbsp;returned&nbsp;by&nbsp;:func:`historical_average_fit`.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;DataFrame&nbsp;with&nbsp;UTC&nbsp;``target_time``&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Float&nbsp;array&nbsp;of&nbsp;predicted&nbsp;occupants,&nbsp;one&nbsp;per&nbsp;row.</span></dd></dl>
+ <dl><dt><a name="-measured_target_mask"><strong>measured_target_mask</strong></a>(data: 'pd.DataFrame') -&gt; 'np.ndarray'</dt><dd><span class="code">Return&nbsp;boolean&nbsp;mask&nbsp;of&nbsp;genuinely&nbsp;measured&nbsp;target&nbsp;observations.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;Frame&nbsp;containing&nbsp;``target_is_measured``.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Boolean&nbsp;NumPy&nbsp;array&nbsp;of&nbsp;length&nbsp;``len(data)``.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;Measurement&nbsp;flag&nbsp;column&nbsp;is&nbsp;missing.</span></dd></dl>
+ <dl><dt><a name="-validate_frame"><strong>validate_frame</strong></a>(data: 'pd.DataFrame') -&gt; 'pd.DataFrame'</dt><dd><span class="code">Validate&nbsp;and&nbsp;sort&nbsp;processed&nbsp;occupancy&nbsp;examples.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;DataFrame&nbsp;with&nbsp;six&nbsp;numeric&nbsp;features,&nbsp;prediction&nbsp;target,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;``collecteddate``&nbsp;and&nbsp;``target_time``&nbsp;timestamps.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Chronologically&nbsp;sorted&nbsp;copy&nbsp;with&nbsp;UTC&nbsp;datetime&nbsp;columns.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;Required&nbsp;columns&nbsp;missing,&nbsp;invalid&nbsp;numbers,&nbsp;invalid&nbsp;times,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-15-minute&nbsp;prediction&nbsp;horizon,&nbsp;or&nbsp;too&nbsp;few&nbsp;rows.</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>FEATURES</strong> = ('current_occupancy', 'previous_15min', 'previous_30min', 'hour', 'minute', 'day_of_week')<br>
+<strong>TARGET</strong> = 'next_15min_occupancy'</td></tr></table>
+</body></html>
